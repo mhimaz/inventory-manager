@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.inventory.manager.application.customer.dto.GetCustomerResponseDTO;
+import com.inventory.manager.application.location.dto.GetLocationResponseDTO;
 import com.inventory.manager.application.shared.dto.BaseResponseDTO;
 
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
@@ -19,9 +20,17 @@ public class GetSalesInvoiceResponseDTO extends BaseResponseDTO {
 
     private Date soldDate;
 
-    private String location;
+    private GetLocationResponseDTO location;
 
     private String remarks;
+
+    private Boolean isReturn;
+
+    private double grandTotal;
+
+    private double discountTotal;
+
+    private double netTotal;
 
     private List<SalesInvoiceLineResponseDTO> lines;
 
@@ -57,11 +66,11 @@ public class GetSalesInvoiceResponseDTO extends BaseResponseDTO {
         this.soldDate = soldDate;
     }
 
-    public String getLocation() {
+    public GetLocationResponseDTO getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(GetLocationResponseDTO location) {
         this.location = location;
     }
 
@@ -73,9 +82,41 @@ public class GetSalesInvoiceResponseDTO extends BaseResponseDTO {
         this.remarks = remarks;
     }
 
+    public Boolean getIsReturn() {
+        return isReturn;
+    }
+
+    public void setIsReturn(Boolean isReturn) {
+        this.isReturn = isReturn;
+    }
+
+    public double getGrandTotal() {
+        return grandTotal;
+    }
+
+    public void setGrandTotal(double grandTotal) {
+        this.grandTotal = grandTotal;
+    }
+
+    public double getDiscountTotal() {
+        return discountTotal;
+    }
+
+    public void setDiscountTotal(double discountTotal) {
+        this.discountTotal = discountTotal;
+    }
+
+    public double getNetTotal() {
+        return netTotal;
+    }
+
+    public void setNetTotal(double netTotal) {
+        this.netTotal = netTotal;
+    }
+
     public List<SalesInvoiceLineResponseDTO> getLines() {
         if (lines == null) {
-            lines = new ArrayList<SalesInvoiceLineResponseDTO>();
+            lines = new ArrayList<>();
         }
         return lines;
     }

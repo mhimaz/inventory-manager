@@ -11,9 +11,13 @@ public class CreateTransferNoteRequestDTO {
 
     private Date transferredDate;
 
-    private String fromLocation;
+    // private String fromLocation;
+    //
+    // private String toLocation;
 
-    private String toLocation;
+    private Integer fromLocationId;
+
+    private Integer toLocationId;
 
     private String remarks;
 
@@ -27,20 +31,36 @@ public class CreateTransferNoteRequestDTO {
         this.transferredDate = transferredDate;
     }
 
-    public String getFromLocation() {
-        return fromLocation;
+    // public String getFromLocation() {
+    // return fromLocation;
+    // }
+    //
+    // public void setFromLocation(String fromLocation) {
+    // this.fromLocation = fromLocation;
+    // }
+    //
+    // public String getToLocation() {
+    // return toLocation;
+    // }
+    //
+    // public void setToLocation(String toLocation) {
+    // this.toLocation = toLocation;
+    // }
+
+    public Integer getFromLocationId() {
+        return fromLocationId;
     }
 
-    public void setFromLocation(String fromLocation) {
-        this.fromLocation = fromLocation;
+    public void setFromLocationId(Integer fromLocationId) {
+        this.fromLocationId = fromLocationId;
     }
 
-    public String getToLocation() {
-        return toLocation;
+    public Integer getToLocationId() {
+        return toLocationId;
     }
 
-    public void setToLocation(String toLocation) {
-        this.toLocation = toLocation;
+    public void setToLocationId(Integer toLocationId) {
+        this.toLocationId = toLocationId;
     }
 
     public String getRemarks() {
@@ -67,8 +87,8 @@ public class CreateTransferNoteRequestDTO {
         final StringBuilder sb = new StringBuilder();
         sb.append("CreateTransferNoteRequestDTO ");
         sb.append("{transferredDate=").append(transferredDate);
-        sb.append(", fromLocation=").append(fromLocation);
-        sb.append(", toLocation=").append(toLocation);
+        sb.append(", fromLocationId=").append(fromLocationId);
+        sb.append(", toLocationId=").append(toLocationId);
         sb.append(", remarks=").append(remarks);
         sb.append(", transferNoteLines=").append(transferNoteLines);
         sb.append('}');

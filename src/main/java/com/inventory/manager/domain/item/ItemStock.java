@@ -15,7 +15,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.inventory.manager.domain.enums.Location;
+
+import com.inventory.manager.domain.location.Location;
+//import com.inventory.manager.domain.enums.Location;
 import com.inventory.manager.domain.shared.BaseEntity;
 
 @Entity
@@ -34,8 +36,12 @@ public class ItemStock extends BaseEntity implements Serializable {
     @JoinColumn(name = "ItemID")
     private Item item;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Location")
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "Location")
+//    private Location location;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LocationID")
     private Location location;
 
     @Column(name = "Quantity")

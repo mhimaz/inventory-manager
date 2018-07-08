@@ -1,9 +1,12 @@
 package com.inventory.manager.domain.stockhistory.sales;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,6 +16,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.inventory.manager.domain.enums.DiscountMode;
 import com.inventory.manager.domain.item.Item;
 import com.inventory.manager.domain.shared.BaseEntity;
 
@@ -38,6 +42,22 @@ public class SalesInvoiceLine extends BaseEntity implements Serializable {
 
     @Column(name = "Quantity")
     private Long quantity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "DiscountMode")
+    private DiscountMode discountMode;
+
+    @Column(name = "DiscountValue")
+    private BigDecimal discountValue;
+
+    @Column(name = "GrandTotal")
+    private BigDecimal grandTotal;
+
+    @Column(name = "DiscountTotal")
+    private BigDecimal discountTotal;
+
+    @Column(name = "NetTotal")
+    private BigDecimal netTotal;
 
     public Integer getId() {
         return id;
@@ -69,6 +89,46 @@ public class SalesInvoiceLine extends BaseEntity implements Serializable {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public DiscountMode getDiscountMode() {
+        return discountMode;
+    }
+
+    public void setDiscountMode(DiscountMode discountMode) {
+        this.discountMode = discountMode;
+    }
+
+    public BigDecimal getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(BigDecimal discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public BigDecimal getGrandTotal() {
+        return grandTotal;
+    }
+
+    public void setGrandTotal(BigDecimal grandTotal) {
+        this.grandTotal = grandTotal;
+    }
+
+    public BigDecimal getDiscountTotal() {
+        return discountTotal;
+    }
+
+    public void setDiscountTotal(BigDecimal discountTotal) {
+        this.discountTotal = discountTotal;
+    }
+
+    public BigDecimal getNetTotal() {
+        return netTotal;
+    }
+
+    public void setNetTotal(BigDecimal netTotal) {
+        this.netTotal = netTotal;
     }
 
 }

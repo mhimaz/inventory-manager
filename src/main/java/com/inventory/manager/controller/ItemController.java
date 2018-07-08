@@ -1,5 +1,9 @@
 package com.inventory.manager.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -15,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.inventory.manager.application.item.ItemApplicationService;
 import com.inventory.manager.application.item.dto.CreateItemRequestDTO;
+import com.inventory.manager.application.item.dto.GetItemResponseDTO;
 import com.inventory.manager.application.item.dto.ListItemsResponseDTO;
+import com.inventory.manager.application.item.dto.UpdateItemPriceRequestDTO;
 import com.inventory.manager.application.item.dto.UpdateItemRequestDTO;
 import com.inventory.manager.exception.BadRequestException;
 import com.inventory.manager.exception.ConflictException;
@@ -36,6 +42,11 @@ public class ItemController extends HTTPResponseHandler {
 
     private static final Logger logger = Logger.getLogger(ItemController.class);
 
+    @ApiOperation(httpMethod = "POST", value = "Create item", nickname = "Create item")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Success", response = Integer.class),
+        @ApiResponse(code = 401, message = "Unauthorized"), @ApiResponse(code = 403, message = "Forbidden"),
+        @ApiResponse(code = 404, message = "Not Found"), @ApiResponse(code = 500, message = "Failure"),
+        @ApiResponse(code = 400, message = "Bad Request")})
     @ResponseBody
     @RequestMapping(value = "item/create", method = RequestMethod.POST)
     public Integer createItem(@RequestBody CreateItemRequestDTO requestDTO, HttpServletResponse response) {
@@ -59,13 +70,14 @@ public class ItemController extends HTTPResponseHandler {
 
     @ResponseBody
     @RequestMapping(value = "item/{id}", method = RequestMethod.PUT)
-    public void updateItem(@PathVariable(value = "id") Integer itemId, @RequestBody UpdateItemRequestDTO requestDTO,
-            HttpServletResponse response) {
+    public GetItemResponseDTO updateItem(@PathVariable(value = "id") Integer itemId,
+            @RequestBody UpdateItemRequestDTO requestDTO, HttpServletResponse response) {
 
         setStatusHeadersToSuccess(response);
+        GetItemResponseDTO responseDTO = null;
         try {
 
-            itemAppSvc.updateItem(itemId, requestDTO);
+            responseDTO = itemAppSvc.updateItem(itemId, requestDTO);
 
         } catch (BadRequestException | DuplicateException | NotFoundException | ConflictException e) {
             logger.error("Error occurred while updating item", e);
@@ -75,6 +87,29 @@ public class ItemController extends HTTPResponseHandler {
             logger.error("Error occurred while updating item", e);
             adapterErrorHandlerUtil.throwInternalServerErrorException();
         }
+        return responseDTO;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "item/{id}/price", method = RequestMethod.PUT)
+    public GetItemResponseDTO updateItemPrice(@PathVariable(value = "id") Integer itemId,
+            @RequestBody UpdateItemPriceRequestDTO requestDTO, HttpServletResponse response) {
+
+        setStatusHeadersToSuccess(response);
+        GetItemResponseDTO responseDTO = null;
+        try {
+
+            responseDTO = itemAppSvc.updateItemPrice(itemId, requestDTO);
+
+        } catch (BadRequestException | DuplicateException | NotFoundException | ConflictException e) {
+            logger.error("Error occurred while updating item price", e);
+            adapterErrorHandlerUtil.handleHTTPStatusCodeException(e);
+
+        } catch (Exception e) {
+            logger.error("Error occurred while updating item price", e);
+            adapterErrorHandlerUtil.throwInternalServerErrorException();
+        }
+        return responseDTO;
     }
 
     @ResponseBody

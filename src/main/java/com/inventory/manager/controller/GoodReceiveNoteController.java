@@ -17,6 +17,8 @@ import com.inventory.manager.application.grn.GRNApplicationService;
 import com.inventory.manager.application.grn.dto.CreateGoodReceiveNoteRequestDTO;
 import com.inventory.manager.application.grn.dto.GetGoodReceiveNoteResponseDTO;
 import com.inventory.manager.application.grn.dto.ListGoodReceiveNoteResponseDTO;
+import com.inventory.manager.application.shared.dto.CalculateTotalRequestDTO;
+import com.inventory.manager.application.shared.dto.CalculateTotalResponseDTO;
 import com.inventory.manager.exception.BadRequestException;
 import com.inventory.manager.exception.ConflictException;
 import com.inventory.manager.exception.DuplicateException;
@@ -121,6 +123,27 @@ public class GoodReceiveNoteController extends HTTPResponseHandler {
             logger.error("Error occurred while deleting grns", e);
             adapterErrorHandlerUtil.throwInternalServerErrorException();
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "grn/calculatetotal", method = RequestMethod.POST)
+    public CalculateTotalResponseDTO calculateTotal(@RequestBody CalculateTotalRequestDTO requestDTO,
+            HttpServletResponse response) {
+
+        setStatusHeadersToSuccess(response);
+        CalculateTotalResponseDTO responseDTO = null;
+        try {
+            responseDTO = grnAppSvc.calculateTotal(requestDTO);
+
+        } catch (BadRequestException | DuplicateException | NotFoundException | ConflictException e) {
+            logger.error("Error occurred while calculating total", e);
+            adapterErrorHandlerUtil.handleHTTPStatusCodeException(e);
+
+        } catch (Exception e) {
+            logger.error("Error occurred while calculating total", e);
+            adapterErrorHandlerUtil.throwInternalServerErrorException();
+        }
+        return responseDTO;
     }
 
 }

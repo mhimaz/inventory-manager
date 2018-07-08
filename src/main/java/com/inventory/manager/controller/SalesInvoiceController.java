@@ -17,6 +17,8 @@ import com.inventory.manager.application.sales.SalesInvoiceApplicationService;
 import com.inventory.manager.application.sales.dto.CreateSalesInvoiceRequestDTO;
 import com.inventory.manager.application.sales.dto.GetSalesInvoiceResponseDTO;
 import com.inventory.manager.application.sales.dto.ListSalesInvoiceResponseDTO;
+import com.inventory.manager.application.shared.dto.CalculateTotalRequestDTO;
+import com.inventory.manager.application.shared.dto.CalculateTotalResponseDTO;
 import com.inventory.manager.exception.BadRequestException;
 import com.inventory.manager.exception.ConflictException;
 import com.inventory.manager.exception.DuplicateException;
@@ -122,6 +124,27 @@ public class SalesInvoiceController extends HTTPResponseHandler {
             logger.error("Error occurred while deleting sales invoice", e);
             adapterErrorHandlerUtil.throwInternalServerErrorException();
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "sales/calculatetotal", method = RequestMethod.POST)
+    public CalculateTotalResponseDTO calculateTotal(@RequestBody CalculateTotalRequestDTO requestDTO,
+            HttpServletResponse response) {
+
+        setStatusHeadersToSuccess(response);
+        CalculateTotalResponseDTO responseDTO = null;
+        try {
+            responseDTO = salesInvoiceAppSvc.calculateTotal(requestDTO);
+
+        } catch (BadRequestException | DuplicateException | NotFoundException | ConflictException e) {
+            logger.error("Error occurred while calculating total", e);
+            adapterErrorHandlerUtil.handleHTTPStatusCodeException(e);
+
+        } catch (Exception e) {
+            logger.error("Error occurred while calculating total", e);
+            adapterErrorHandlerUtil.throwInternalServerErrorException();
+        }
+        return responseDTO;
     }
 
 }

@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -18,7 +20,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.inventory.manager.domain.enums.Location;
+
+import com.inventory.manager.domain.location.Location;
+//import com.inventory.manager.domain.enums.Location;
 import com.inventory.manager.domain.shared.BaseEntity;
 
 @Entity
@@ -33,12 +37,20 @@ public class TransferNote extends BaseEntity implements Serializable {
     @Column(name = "ID", unique = true, nullable = false)
     private Integer id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "FromLocation")
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "FromLocation")
+//    private Location fromLocation;
+    
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "ToLocation")
+//    private Location toLocation;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FromLocationID")
     private Location fromLocation;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ToLocation")
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ToLocationID")
     private Location toLocation;
 
     @Column(name = "TransferredDate")
@@ -49,7 +61,7 @@ public class TransferNote extends BaseEntity implements Serializable {
     private String remarks;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "transferNote")
-    private List<TransferNoteLine> transferNoteLines = new ArrayList<TransferNoteLine>();
+    private List<TransferNoteLine> transferNoteLines = new ArrayList<>();
 
     public Integer getId() {
         return id;

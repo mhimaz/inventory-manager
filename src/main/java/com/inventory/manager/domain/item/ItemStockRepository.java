@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.inventory.manager.domain.enums.Location;
+import com.inventory.manager.domain.location.Location;
+
+//import com.inventory.manager.domain.enums.Location;
 
 @Repository
 public interface ItemStockRepository extends CrudRepository<ItemStock, Integer> {
@@ -13,4 +15,6 @@ public interface ItemStockRepository extends CrudRepository<ItemStock, Integer> 
     List<ItemStock> findByItemAndIsDeleted(Item item, Boolean isDeleted);
 
     ItemStock findByItemAndLocationAndIsDeleted(Item item, Location location, Boolean isDeleted);
+
+    List<ItemStock> findByLocationAndIsDeleted(Location location, Boolean isDeleted);
 }

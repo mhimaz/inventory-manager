@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.inventory.manager.application.location.dto.GetLocationResponseDTO;
 import com.inventory.manager.application.shared.dto.BaseResponseDTO;
 
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
@@ -14,9 +15,9 @@ public class GetTransferNoteResponseDTO extends BaseResponseDTO {
 
     private Date transferredDate;
 
-    private String fromLocation;
+    private GetLocationResponseDTO fromLocation;
 
-    private String toLocation;
+    private GetLocationResponseDTO toLocation;
 
     private String remarks;
 
@@ -38,19 +39,19 @@ public class GetTransferNoteResponseDTO extends BaseResponseDTO {
         this.transferredDate = transferredDate;
     }
 
-    public String getFromLocation() {
+    public GetLocationResponseDTO getFromLocation() {
         return fromLocation;
     }
 
-    public void setFromLocation(String fromLocation) {
+    public void setFromLocation(GetLocationResponseDTO fromLocation) {
         this.fromLocation = fromLocation;
     }
 
-    public String getToLocation() {
+    public GetLocationResponseDTO getToLocation() {
         return toLocation;
     }
 
-    public void setToLocation(String toLocation) {
+    public void setToLocation(GetLocationResponseDTO toLocation) {
         this.toLocation = toLocation;
     }
 

@@ -15,6 +15,8 @@ import com.inventory.manager.application.transfer.dto.ListTransferNoteResponseDT
 import com.inventory.manager.application.transfer.dto.TransferNoteLineRequestDTO;
 import com.inventory.manager.domain.item.Item;
 import com.inventory.manager.domain.item.ItemService;
+import com.inventory.manager.domain.location.Location;
+import com.inventory.manager.domain.location.LocationService;
 import com.inventory.manager.domain.stockhistory.transfer.TransferNote;
 import com.inventory.manager.domain.stockhistory.transfer.TransferNoteLine;
 import com.inventory.manager.domain.stockhistory.transfer.TransferNoteService;
@@ -34,6 +36,9 @@ public class TransferNoteApplicationService {
     @Autowired
     private TransferNoteService transferNoteService;
 
+    @Autowired
+    private LocationService locationService;
+
     @Transactional
     public Integer createTransferNote(CreateTransferNoteRequestDTO requestDTO) {
         logger.info("[ Create Transfer Note :: " + requestDTO + " ]");
@@ -46,7 +51,18 @@ public class TransferNoteApplicationService {
             throw new NotFoundException("Item not found for one of the item ids: " + itemIds);
         }
 
-        TransferNote transferNote = transferNoteTransformer.toTransferNote(requestDTO);
+        Location fromLocation = locationService.findLocationById(requestDTO.getFromLocationId());
+
+        Location toLocation = locationService.findLocationById(requestDTO.getToLocationId());
+
+        if (fromLocation == null) {
+            throw new NotFoundException("From location not found for the the id: " + requestDTO.getFromLocationId());
+        }
+        if (toLocation == null) {
+            throw new NotFoundException("To location not found for the the id: " + requestDTO.getToLocationId());
+        }
+
+        TransferNote transferNote = transferNoteTransformer.toTransferNote(requestDTO, fromLocation, toLocation);
 
         List<TransferNoteLine> transferNoteLines = transferNoteTransformer.toTransferNoteLines(
                 requestDTO.getTransferNoteLines(), items);

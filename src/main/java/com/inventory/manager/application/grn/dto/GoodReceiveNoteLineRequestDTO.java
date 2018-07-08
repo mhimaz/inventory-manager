@@ -9,6 +9,10 @@ public class GoodReceiveNoteLineRequestDTO {
 
     private Long quantity;
 
+    private String discountMode;
+
+    private double discountValue;
+
     public Integer getItemId() {
         return itemId;
     }
@@ -25,12 +29,30 @@ public class GoodReceiveNoteLineRequestDTO {
         this.quantity = quantity;
     }
 
+    public String getDiscountMode() {
+        return discountMode;
+    }
+
+    public void setDiscountMode(String discountMode) {
+        this.discountMode = discountMode;
+    }
+
+    public double getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(double discountValue) {
+        this.discountValue = discountValue;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("GoodReceiveNoteLineRequestDTO ");
         sb.append("{itemId=").append(itemId);
         sb.append(", quantity=").append(quantity);
+        sb.append(", discountMode=").append(discountMode);
+        sb.append(", discountValue=").append(discountValue);
         sb.append('}');
         return sb.toString();
     }

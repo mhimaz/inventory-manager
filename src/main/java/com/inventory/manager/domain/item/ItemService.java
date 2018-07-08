@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.inventory.manager.domain.item.price.ItemPrice;
+import com.inventory.manager.domain.item.price.ItemPriceRepository;
 import com.inventory.manager.domain.supplier.Supplier;
 import com.inventory.manager.exception.ConflictException;
 import com.inventory.manager.exception.CustomExceptionCodes;
@@ -25,18 +27,19 @@ public class ItemService {
     @Autowired
     private ItemStockService itemStockService;
 
-    public Item createItem(Item item) {
+    @Autowired
+    private ItemPriceRepository itemPriceRepo;
+
+    public Item createItem(Item item, List<ItemStock> itemStocks, ItemPrice price) {
+
+        price.setIsDeleted(false);
+        itemPriceRepo.save(price);
 
         item.setIsDeleted(false);
-        return itemRepo.save(item);
-    }
-
-    public Item createItem(Item item, List<ItemStock> itemStocks) {
-
-        item.setIsDeleted(false);
+        item.setPrice(price);
         itemRepo.save(item);
 
-        if (itemStocks != null & !itemStocks.isEmpty()) {
+        if (itemStocks != null && !itemStocks.isEmpty()) {
 
             itemStocks.forEach(is -> {
                 is.setItem(item);
@@ -62,13 +65,17 @@ public class ItemService {
             }
         }
 
+        ItemPrice price = item.getPrice();
+        price.setIsDeleted(true);
+        itemPriceRepo.save(price);
+
         item.setIsDeleted(true);
         itemRepo.save(item);
     }
 
-    public void updateItem(Item item) {
+    public Item updateItem(Item item) {
 
-        itemRepo.save(item);
+        return itemRepo.save(item);
     }
 
     public List<Item> findBySupplier(Supplier supplier) {

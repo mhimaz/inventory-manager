@@ -15,13 +15,12 @@ ext {
 	slf4jVersion="1.7.10"
 	springDataVersion = "1.8.0.RELEASE"
 	hibernateVersion = "4.3.9.Final"
-	//ext.springSecurityVersion = "4.0.1.RELEASE"
-	//ext.springDataMongoDBVersion = "1.7.0.RELEASE"
 	mysqlConnectorVersion = "5.1.13"
 }
 
 repositories {
     mavenCentral()
+     jcenter()
 }
 
 dependencies {
@@ -42,7 +41,6 @@ dependencies {
 	compile "org.hibernate:hibernate-c3p0:$hibernateVersion"
 	compile "mysql:mysql-connector-java:$mysqlConnectorVersion"
 	compile "commons-validator:commons-validator:1.4.1"
-	//compile "javax.validation:validation-api:1.1.0.Final"
 
 	// util
 	compile "org.apache.commons:commons-collections4:4.0"
@@ -53,10 +51,15 @@ dependencies {
 	
 	// logging
 	compile "log4j:log4j:1.2.17"
-	//compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
-	//compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.5'
-	//compile "org.apache.logging.log4j:log4j-core:2.5"
-	//compile "org.apache.logging.log4j:log4j-api:2.5"
+	
+	//Swagger
+	compile('io.springfox:springfox-swagger2:2.6.1')
+ 	compile('io.springfox:springfox-swagger-ui:2.6.1')
+ 	
+ 	//PDF
+ 	compile 'com.itextpdf:itextpdf:5.5.13'
+ 	compile 'org.apache.pdfbox:pdfbox:2.0.9'
+ 	
 	
 	// Test
 	testCompile "org.springframework:spring-test:$springVersion"

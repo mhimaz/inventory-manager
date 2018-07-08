@@ -13,6 +13,16 @@ public class SalesInvoiceLineResponseDTO extends BaseResponseDTO {
 
     private Long quantity;
 
+    private String discountMode;
+
+    private double discountValue;
+
+    private double grandTotal;
+
+    private double discountTotal;
+
+    private double netTotal;
+
     public Integer getId() {
         return id;
     }
@@ -35,6 +45,46 @@ public class SalesInvoiceLineResponseDTO extends BaseResponseDTO {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public String getDiscountMode() {
+        return discountMode;
+    }
+
+    public void setDiscountMode(String discountMode) {
+        this.discountMode = discountMode;
+    }
+
+    public double getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(double discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public double getGrandTotal() {
+        return grandTotal;
+    }
+
+    public void setGrandTotal(double grandTotal) {
+        this.grandTotal = grandTotal;
+    }
+
+    public double getDiscountTotal() {
+        return discountTotal;
+    }
+
+    public void setDiscountTotal(double discountTotal) {
+        this.discountTotal = discountTotal;
+    }
+
+    public double getNetTotal() {
+        return netTotal;
+    }
+
+    public void setNetTotal(double netTotal) {
+        this.netTotal = netTotal;
     }
 
 }

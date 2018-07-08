@@ -2,7 +2,6 @@ package com.inventory.manager.application.transfer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +9,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import com.inventory.manager.application.item.ItemTransformer;
+import com.inventory.manager.application.location.LocationTransformer;
 import com.inventory.manager.application.shared.dto.PaginationDTO;
 import com.inventory.manager.application.transfer.dto.CreateTransferNoteRequestDTO;
 import com.inventory.manager.application.transfer.dto.GetTransferNoteResponseDTO;
 import com.inventory.manager.application.transfer.dto.ListTransferNoteResponseDTO;
 import com.inventory.manager.application.transfer.dto.TransferNoteLineRequestDTO;
 import com.inventory.manager.application.transfer.dto.TransferNoteLineResponseDTO;
-import com.inventory.manager.domain.enums.Location;
+//import com.inventory.manager.domain.enums.Location;
 import com.inventory.manager.domain.item.Item;
+import com.inventory.manager.domain.location.Location;
 import com.inventory.manager.domain.stockhistory.transfer.TransferNote;
 import com.inventory.manager.domain.stockhistory.transfer.TransferNoteLine;
 
@@ -27,11 +28,15 @@ public class TransferNoteTransformer {
     @Autowired
     private ItemTransformer itemTransformer;
 
-    public TransferNote toTransferNote(CreateTransferNoteRequestDTO requestDTO) {
+    @Autowired
+    private LocationTransformer locationTransformer;
+
+    public TransferNote toTransferNote(CreateTransferNoteRequestDTO requestDTO, Location fromLocation,
+            Location toLocation) {
         TransferNote transferNote = new TransferNote();
         transferNote.setTransferredDate(new DateTime(requestDTO.getTransferredDate()));
-        transferNote.setFromLocation(Location.valueOf(requestDTO.getFromLocation().toUpperCase(Locale.ENGLISH)));
-        transferNote.setToLocation(Location.valueOf(requestDTO.getToLocation().toUpperCase(Locale.ENGLISH)));
+        transferNote.setFromLocation(fromLocation);
+        transferNote.setToLocation(toLocation);
         transferNote.setRemarks(requestDTO.getRemarks());
         return transferNote;
     }
@@ -67,8 +72,8 @@ public class TransferNoteTransformer {
         GetTransferNoteResponseDTO responseDTO = new GetTransferNoteResponseDTO();
 
         responseDTO.setId(transferNote.getId());
-        responseDTO.setFromLocation(transferNote.getFromLocation().getLabel());
-        responseDTO.setToLocation(transferNote.getToLocation().getLabel());
+        responseDTO.setFromLocation(locationTransformer.toGetLocationResponseDTO(transferNote.getFromLocation()));
+        responseDTO.setToLocation(locationTransformer.toGetLocationResponseDTO(transferNote.getToLocation()));
         responseDTO.setTransferredDate(transferNote.getTransferredDate().toDate());
         responseDTO.setRemarks(transferNote.getRemarks());
         return responseDTO;

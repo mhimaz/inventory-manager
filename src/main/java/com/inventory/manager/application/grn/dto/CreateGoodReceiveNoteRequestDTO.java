@@ -15,9 +15,11 @@ public class CreateGoodReceiveNoteRequestDTO {
 
     private String receiptNo;
 
-    private String location;
+    private Integer locationId;
 
     private String remarks;
+
+    private boolean isReturn;
 
     private List<GoodReceiveNoteLineRequestDTO> goodReceiveNoteLines;
 
@@ -45,12 +47,12 @@ public class CreateGoodReceiveNoteRequestDTO {
         this.receiptNo = receiptNo;
     }
 
-    public String getLocation() {
-        return location;
+    public Integer getLocationId() {
+        return locationId;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
     }
 
     public String getRemarks() {
@@ -61,9 +63,17 @@ public class CreateGoodReceiveNoteRequestDTO {
         this.remarks = remarks;
     }
 
+    public boolean isReturn() {
+        return isReturn;
+    }
+
+    public void setReturn(boolean isReturn) {
+        this.isReturn = isReturn;
+    }
+
     public List<GoodReceiveNoteLineRequestDTO> getGoodReceiveNoteLines() {
         if (goodReceiveNoteLines == null) {
-            goodReceiveNoteLines = new ArrayList<GoodReceiveNoteLineRequestDTO>();
+            goodReceiveNoteLines = new ArrayList<>();
         }
         return goodReceiveNoteLines;
     }
@@ -79,8 +89,9 @@ public class CreateGoodReceiveNoteRequestDTO {
         sb.append("{supplierId=").append(supplierId);
         sb.append(", purchasedDate=").append(purchasedDate);
         sb.append(", receiptNo=").append(receiptNo);
-        sb.append(", location=").append(location);
+        sb.append(", locationId=").append(locationId);
         sb.append(", remarks=").append(remarks);
+        sb.append(", isReturn=").append(isReturn);
         sb.append(", goodReceiveNoteLines=").append(goodReceiveNoteLines);
         sb.append('}');
         return sb.toString();

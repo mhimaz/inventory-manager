@@ -16,7 +16,7 @@ public class ListItemsResponseDTO extends BaseResponseDTO {
 
     public List<GetItemResponseDTO> getItems() {
         if (items == null) {
-            items = new ArrayList<GetItemResponseDTO>();
+            items = new ArrayList<>();
         }
         return items;
     }
