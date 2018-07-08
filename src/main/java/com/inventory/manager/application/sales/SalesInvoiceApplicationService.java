@@ -13,13 +13,21 @@ import com.inventory.manager.application.sales.dto.CreateSalesInvoiceRequestDTO;
 import com.inventory.manager.application.sales.dto.GetSalesInvoiceResponseDTO;
 import com.inventory.manager.application.sales.dto.ListSalesInvoiceResponseDTO;
 import com.inventory.manager.application.sales.dto.SalesInvoiceLineRequestDTO;
+import com.inventory.manager.application.shared.dto.CalculateTotalRequestDTO;
+import com.inventory.manager.application.shared.dto.CalculateTotalResponseDTO;
 import com.inventory.manager.domain.customer.Customer;
 import com.inventory.manager.domain.customer.CustomerService;
+import com.inventory.manager.domain.enums.InvoiceType;
 import com.inventory.manager.domain.item.Item;
 import com.inventory.manager.domain.item.ItemService;
+import com.inventory.manager.domain.location.Location;
+import com.inventory.manager.domain.location.LocationService;
 import com.inventory.manager.domain.stockhistory.sales.SalesInvoice;
 import com.inventory.manager.domain.stockhistory.sales.SalesInvoiceLine;
 import com.inventory.manager.domain.stockhistory.sales.SalesInvoiceService;
+import com.inventory.manager.domain.util.PDFWriter;
+import com.inventory.manager.domain.util.TotalCalculator;
+import com.inventory.manager.exception.CustomExceptionCodes;
 import com.inventory.manager.exception.NotFoundException;
 
 @Service
@@ -39,23 +47,40 @@ public class SalesInvoiceApplicationService {
     @Autowired
     private SalesInvoiceService salesInvoiceService;
 
+    @Autowired
+    private SalesInvoiceSpecification salesInvoiceSpec;
+
+    @Autowired
+    private TotalCalculator totalCalculator;
+
+    @Autowired
+    private LocationService locationService;
+
     @Transactional
     public Integer createSalesInvoice(CreateSalesInvoiceRequestDTO requestDTO) {
         logger.info("[ Create Sales Invoice :: " + requestDTO + " ]");
 
         Customer customer = customerService.findCustomerById(requestDTO.getCustomerId());
+
+        if (customer == null) {
+            throw new NotFoundException(CustomExceptionCodes.CUSTOMER_NOT_FOUND.toString(),
+                    "Customer not found for the id: " + requestDTO.getCustomerId());
+        }
+
         List<Integer> itemIds = requestDTO.getSalesInvoiceLines().stream().map(SalesInvoiceLineRequestDTO::getItemId)
                 .collect(Collectors.toList());
         List<Item> items = itemService.findByItemIds(itemIds);
 
-        if (items.size() != itemIds.size()) {
-            throw new NotFoundException("Item not found for one of the item ids: " + itemIds);
-        }
+        Location location = locationService.findLocationById(requestDTO.getLocationId());
 
-        SalesInvoice salesInvoice = salesInvoiceTransformer.toSalesInvoice(requestDTO, customer);
+        salesInvoiceSpec.isSatisfiedBy(requestDTO, items, itemIds, location);
 
         List<SalesInvoiceLine> salesInvoiceLines = salesInvoiceTransformer.toSalesInvoiceLines(
                 requestDTO.getSalesInvoiceLines(), items);
+        salesInvoiceLines = totalCalculator.updateSalesInvoiceLineTotal(salesInvoiceLines);
+
+        SalesInvoice salesInvoice = salesInvoiceTransformer.toSalesInvoice(requestDTO, customer, location);
+        salesInvoice = totalCalculator.updateSalesInvoiceTotal(salesInvoiceLines, salesInvoice);
 
         return salesInvoiceService.createSalesInvoice(salesInvoice, salesInvoiceLines);
     }
@@ -79,6 +104,9 @@ public class SalesInvoiceApplicationService {
         return salesInvoiceTransformer.toListSalesInvoiceResponseDTO(sis);
     }
 
+    @Autowired
+    private PDFWriter pdfWriter;
+    
     @Transactional
     public GetSalesInvoiceResponseDTO getSalesInvoice(Integer id) {
 
@@ -86,6 +114,8 @@ public class SalesInvoiceApplicationService {
         if (si == null) {
             throw new NotFoundException("Sales invoice not found for the id: " + id);
         }
+        pdfWriter.write(si);
+        
         return salesInvoiceTransformer.toGetSalesInvoiceResponseDTO(si);
     }
 
@@ -97,7 +127,18 @@ public class SalesInvoiceApplicationService {
             throw new NotFoundException("Sales invoice not found for the id: " + id);
         }
 
+        if (si.getLocation().getIsDeleted()) {
+            throw new NotFoundException("Location : '" + si.getLocation()
+                    + "' was deleted, therefore cannot delete the sale transaction");
+        }
+
         salesInvoiceService.delete(si);
+    }
+
+    public CalculateTotalResponseDTO calculateTotal(CalculateTotalRequestDTO requestDTO) {
+
+        return totalCalculator.calculateTotal(requestDTO, InvoiceType.SALES);
+
     }
 
 }

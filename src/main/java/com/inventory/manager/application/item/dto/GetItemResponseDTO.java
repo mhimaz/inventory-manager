@@ -4,75 +4,95 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.inventory.manager.application.item.price.PriceResponseDTO;
 import com.inventory.manager.application.shared.dto.BaseResponseDTO;
-import com.inventory.manager.application.shared.dto.LocationQuantityDTO;
+import com.inventory.manager.application.shared.dto.LocationQuantityResponseDTO;
 import com.inventory.manager.application.supplier.dto.GetSupplierResponseDTO;
 
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class GetItemResponseDTO extends BaseResponseDTO {
 
-	private Integer id;
+    private Integer id;
 
-	private String name;
+    private String name;
 
-	private String code;
+    private String code;
 
-	private GetSupplierResponseDTO supplier;
+    private GetSupplierResponseDTO supplier;
 
-	private List<LocationQuantityDTO> locationQuantities;
+    private List<LocationQuantityResponseDTO> locationQuantities;
 
-	private Long totalQuantity;
+    private PriceResponseDTO price;
 
-	public Integer getId() {
-		return id;
-	}
+    private Long totalQuantity;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    private boolean hasNegativeStock;
 
-	public String getName() {
-		return name;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public GetSupplierResponseDTO getSupplier() {
-		return supplier;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setSupplier(GetSupplierResponseDTO supplier) {
-		this.supplier = supplier;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public List<LocationQuantityDTO> getLocationQuantities() {
-		if (locationQuantities == null) {
-			locationQuantities = new ArrayList<LocationQuantityDTO>();
-		}
-		return locationQuantities;
-	}
+    public GetSupplierResponseDTO getSupplier() {
+        return supplier;
+    }
 
-	public void setLocationQuantities(
-			List<LocationQuantityDTO> locationQuantities) {
-		this.locationQuantities = locationQuantities;
-	}
+    public void setSupplier(GetSupplierResponseDTO supplier) {
+        this.supplier = supplier;
+    }
 
-	public Long getTotalQuantity() {
-		return totalQuantity;
-	}
+    public List<LocationQuantityResponseDTO> getLocationQuantities() {
+        if (locationQuantities == null) {
+            locationQuantities = new ArrayList<>();
+        }
+        return locationQuantities;
+    }
 
-	public void setTotalQuantity(Long totalQuantity) {
-		this.totalQuantity = totalQuantity;
-	}
+    public void setLocationQuantities(List<LocationQuantityResponseDTO> locationQuantities) {
+        this.locationQuantities = locationQuantities;
+    }
+
+    public PriceResponseDTO getPrice() {
+        return price;
+    }
+
+    public void setPrice(PriceResponseDTO price) {
+        this.price = price;
+    }
+
+    public Long getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Long totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public boolean isHasNegativeStock() {
+        return hasNegativeStock;
+    }
+
+    public void setHasNegativeStock(boolean hasNegativeStock) {
+        this.hasNegativeStock = hasNegativeStock;
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.inventory.manager.application.item;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +10,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.inventory.manager.application.item.dto.CreateItemRequestDTO;
+import com.inventory.manager.application.item.dto.GetItemResponseDTO;
 import com.inventory.manager.application.item.dto.ListItemsResponseDTO;
+import com.inventory.manager.application.item.dto.UpdateItemPriceRequestDTO;
 import com.inventory.manager.application.item.dto.UpdateItemRequestDTO;
+import com.inventory.manager.application.shared.dto.LocationQuantityDTO;
 import com.inventory.manager.domain.item.Item;
 import com.inventory.manager.domain.item.ItemService;
 import com.inventory.manager.domain.item.ItemStock;
+import com.inventory.manager.domain.item.price.ItemPrice;
+import com.inventory.manager.domain.item.price.ItemPriceService;
+import com.inventory.manager.domain.location.Location;
+import com.inventory.manager.domain.location.LocationService;
 import com.inventory.manager.domain.supplier.Supplier;
 import com.inventory.manager.domain.supplier.SupplierService;
 import com.inventory.manager.exception.CustomExceptionCodes;
@@ -31,10 +39,16 @@ public class ItemApplicationService {
     private ItemService itemService;
 
     @Autowired
+    private ItemPriceService itemPriceService;
+
+    @Autowired
     private ItemTransformer itemTransformer;
 
     @Autowired
     private ItemSpecification itemSpecification;
+
+    @Autowired
+    private LocationService locationService;
 
     @Transactional
     public Integer createItem(CreateItemRequestDTO requestDTO) {
@@ -42,17 +56,28 @@ public class ItemApplicationService {
 
         Supplier supplier = supplierService.findSupplierById(requestDTO.getSupplierId());
 
-        itemSpecification.isSatisfiedBy(requestDTO, supplier);
+        List<Location> locations = null;
+        List<Integer> locationIds = null;
+
+        if (!requestDTO.getLocationQuantities().isEmpty()) {
+            locationIds = requestDTO.getLocationQuantities().stream().map(LocationQuantityDTO::getLocationId)
+                    .collect(Collectors.toList());
+
+            locations = locationService.findByLocationIds(locationIds);
+        }
+
+        itemSpecification.isSatisfiedBy(requestDTO, supplier, locations, locationIds);
 
         Item item = itemTransformer.toItem(supplier, requestDTO);
-        List<ItemStock> itemStocks = itemTransformer.toItemStocks(requestDTO.getLocationQuantities());
+        List<ItemStock> itemStocks = itemTransformer.toItemStocks(requestDTO.getLocationQuantities(), locations);
+        ItemPrice itemPrice = itemTransformer.toItemPrice(requestDTO.getPrice());
 
-        item = itemService.createItem(item, itemStocks);
+        item = itemService.createItem(item, itemStocks, itemPrice);
         return item.getId();
     }
 
     @Transactional
-    public void updateItem(Integer itemId, UpdateItemRequestDTO requestDTO) {
+    public GetItemResponseDTO updateItem(Integer itemId, UpdateItemRequestDTO requestDTO) {
         logger.info("[ Updating Item :: itemId: " + itemId + ", requestDTO: " + requestDTO + " ]");
 
         Item item = itemService.findItemById(itemId);
@@ -61,7 +86,32 @@ public class ItemApplicationService {
 
         item = itemTransformer.toItem(requestDTO, item);
 
-        itemService.updateItem(item);
+        item = itemService.updateItem(item);
+        return itemTransformer.toGetItemResponseDTO(item);
+    }
+
+    @Transactional
+    public GetItemResponseDTO updateItemPrice(Integer itemId, UpdateItemPriceRequestDTO requestDTO) {
+        logger.info("[ Updating Item Price :: itemId: " + itemId + ", requestDTO: " + requestDTO + " ]");
+
+        Item item = itemService.findItemById(itemId);
+
+        itemSpecification.isSatisfiedBy(requestDTO, item);
+
+        ItemPrice itemPrice = null;
+        if (item.getPrice() == null) {
+            itemPrice = itemTransformer.toItemPrice(requestDTO.getPrice());
+        } else {
+            itemPrice = itemTransformer.toItemPrice(requestDTO.getPrice(), item.getPrice());
+        }
+
+        // TODO - can pass itemPrice in to updateItem() method
+        itemPriceService.updateItemPrice(itemPrice);
+
+        item.setPrice(itemPrice);
+        item = itemService.updateItem(item);
+
+        return itemTransformer.toGetItemResponseDTO(item);
     }
 
     @Transactional

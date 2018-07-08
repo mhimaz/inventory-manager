@@ -16,7 +16,7 @@ public class ListGoodReceiveNoteResponseDTO extends BaseResponseDTO {
 
     public List<GetGoodReceiveNoteResponseDTO> getGrns() {
         if (grns == null) {
-            grns = new ArrayList<GetGoodReceiveNoteResponseDTO>();
+            grns = new ArrayList<>();
         }
         return grns;
     }

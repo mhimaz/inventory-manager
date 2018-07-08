@@ -12,10 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.inventory.manager.domain.item.price.ItemPrice;
 import com.inventory.manager.domain.shared.BaseEntity;
 import com.inventory.manager.domain.supplier.Supplier;
 
@@ -40,9 +42,13 @@ public class Item extends BaseEntity implements Serializable {
 
     @Column(name = "Name")
     private String name;
-    
+
+    @OneToOne
+    @JoinColumn(name = "PriceID")
+    private ItemPrice price;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-    private List<ItemStock> itemStocks = new ArrayList<ItemStock>();
+    private List<ItemStock> itemStocks = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -74,6 +80,14 @@ public class Item extends BaseEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ItemPrice getPrice() {
+        return price;
+    }
+
+    public void setPrice(ItemPrice price) {
+        this.price = price;
     }
 
     public List<ItemStock> getItemStocks() {

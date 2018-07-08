@@ -85,14 +85,14 @@ public class GoodReceiveNoteService {
 
             if (grnl.getItem().getIsDeleted()) {
                 throw new ConflictException(CustomExceptionCodes.ITEM_ALREADY_DELETED.toString(), "Item '"
-                        + grnl.getItem().getName() + "' has been already deleted, therefore cannot undo the GRN.");
+                        + grnl.getItem().getName() + "' has been already deleted, therefore cannot delete the GRN.");
             }
             ItemStock itemStock = itemStockService.findItemStock(grnl.getItem(), goodReceiveNote.getLocation());
 
-            if (itemStock.getQuantity() < grnl.getQuantity()) {
-                throw new ConflictException(CustomExceptionCodes.INSUFFICIENT_QUANTITY.toString(), "Item '"
-                        + grnl.getItem().getName() + "' has insufficient stock available to undo the GRN.");
-            }
+            // if (itemStock.getQuantity() < grnl.getQuantity()) {
+            // throw new ConflictException(CustomExceptionCodes.INSUFFICIENT_QUANTITY.toString(), "Item '"
+            // + grnl.getItem().getName() + "' has insufficient stock available to undo the GRN.");
+            // }
             itemStock.setQuantity(itemStock.getQuantity() - grnl.getQuantity());
             itemStockService.updateItemStock(itemStock);
         }

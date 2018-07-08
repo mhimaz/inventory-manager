@@ -15,9 +15,11 @@ public class CreateSalesInvoiceRequestDTO {
 
     private String receiptNo;
 
-    private String location;
+    private Integer locationId;
 
     private String remarks;
+
+    private boolean isReturn;
 
     private List<SalesInvoiceLineRequestDTO> salesInvoiceLines;
 
@@ -45,12 +47,12 @@ public class CreateSalesInvoiceRequestDTO {
         this.receiptNo = receiptNo;
     }
 
-    public String getLocation() {
-        return location;
+    public Integer getLocationId() {
+        return locationId;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
     }
 
     public String getRemarks() {
@@ -61,9 +63,17 @@ public class CreateSalesInvoiceRequestDTO {
         this.remarks = remarks;
     }
 
+    public boolean isReturn() {
+        return isReturn;
+    }
+
+    public void setReturn(boolean isReturn) {
+        this.isReturn = isReturn;
+    }
+
     public List<SalesInvoiceLineRequestDTO> getSalesInvoiceLines() {
         if (salesInvoiceLines == null) {
-            salesInvoiceLines = new ArrayList<SalesInvoiceLineRequestDTO>();
+            salesInvoiceLines = new ArrayList<>();
         }
         return salesInvoiceLines;
     }
@@ -79,8 +89,9 @@ public class CreateSalesInvoiceRequestDTO {
         sb.append("{customerId=").append(customerId);
         sb.append(", soldDate=").append(soldDate);
         sb.append(", receiptNo=").append(receiptNo);
-        sb.append(", location=").append(location);
+        sb.append(", locationId=").append(locationId);
         sb.append(", remarks=").append(remarks);
+        sb.append(", isReturn=").append(isReturn);
         sb.append(", salesInvoiceLines=").append(salesInvoiceLines);
         sb.append('}');
         return sb.toString();

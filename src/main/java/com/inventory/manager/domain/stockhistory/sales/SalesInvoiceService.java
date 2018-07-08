@@ -40,9 +40,21 @@ public class SalesInvoiceService {
 
             // Update the actual stock
             ItemStock itemStock = itemStockService.findItemStock(sil.getItem(), salesInvoice.getLocation());
-            if (itemStock == null || itemStock.getQuantity() < sil.getQuantity()) {
-                throw new ConflictException(CustomExceptionCodes.INSUFFICIENT_QUANTITY.toString(), "Item '"
-                        + sil.getItem().getName() + "' has insufficient stock available for a sale.");
+
+            // if (itemStock == null || itemStock.getQuantity() < sil.getQuantity()) {
+            // throw new ConflictException(CustomExceptionCodes.INSUFFICIENT_QUANTITY.toString(), "Item '"
+            // + sil.getItem().getName() + "' has insufficient stock available for a sale.");
+            // } else {
+            // itemStock.setQuantity(itemStock.getQuantity() - sil.getQuantity());
+            // itemStockService.updateItemStock(itemStock);
+            // }
+
+            if (itemStock == null) {
+                itemStock = new ItemStock();
+                itemStock.setItem(sil.getItem());
+                itemStock.setLocation(salesInvoice.getLocation());
+                itemStock.setQuantity(sil.getQuantity() * -1);
+                itemStockService.createItemStock(itemStock);
             } else {
                 itemStock.setQuantity(itemStock.getQuantity() - sil.getQuantity());
                 itemStockService.updateItemStock(itemStock);
